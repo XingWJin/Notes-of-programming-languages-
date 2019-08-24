@@ -1,0 +1,3 @@
+When any C++ program terminates, it automatically flushes out all the streams releases all the allocated memory and closes all the opened
+files. But it is good to use the close() function to close the file related streams and it is a member of ifsream, ofstream and fstream 
+objects.
