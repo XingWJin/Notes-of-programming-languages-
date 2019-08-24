@@ -1,0 +1,33 @@
+A literal is something that is fixed (eg set) by a programmer during the creation of the program’s code
+- normally you’ll see the literal as part of the code (eg “Hello World” in a program that writes “Hello World” to the screen).
+
+Often, when a variable is declared, it is initialized to a default value, which is technically also a literal value.
+In general, but depending widely on programming language used, integers are set to the literal “default” value 0, 
+doubles/floats are set to literally 0.0, booleans are set to literal false, etc. These default values are set by 
+the designers of the language, but, again, these are often literals as well - not in your code but in the code 
+for the compiler/interpreter your program is compiled/running in. In the end, for compilers at least, a literal 
+will often be seen in the resulting assembly or intermediate language (such as is the case with Java or .Net) 
+regardless of its source - some will be explicit (ie your code put them there, such as “Hello World”), and others 
+will be implicit, as is in the case with a default value (.Net will set your string variable named “welcome” to be 
+the default literal value of String.empty, for instance). Either way, the definition remains the same - it is something
+that has a fixed value that was set by a programmer during the creation of the code.
+
+A literal itself is sort of like a constant, and often, it’s recommended to put literals as constants so the programmer
+doesn’t have “magic numbers/strings” scattered throughout the code.
+
+Contrast that with a variable - a variable is meant to change during a program’s execution. It often starts as a literal 
+value (or a default value - which is still a literal), but will often change, based on the code executed during the course 
+of the program.
+
+int x = 5; //"5" is the literal
+string name = "Chris";//"Chris" is the literal
+char x = 'x'; //'x' is the literal. 
+double doublePrecisionFloat = 9.0d; //9.0d is the literal
+float singlePrecisionFloat = 9.0f; //9.0f is the literal
+decimal decimalFormattedFloat = 9.0m; //9.0m is the literal
+
+Remember, strings that you type into code have to be interpreted before they can be stored in the variables you declare. So above, 
+where int x = 5 the compiler has to convert the text “5” into an integer so it knows what value to store in x.
+
+Literals are simply textual values in source code that the compiler knows how to interpret and convert into various types at 
+compile time.
