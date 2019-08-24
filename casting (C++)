@@ -1,0 +1,16 @@
+The program declares a pointer to Addition, but then assigns to it a reference to an object of another unrelated type 
+using explicit type-casting:
+
+padd = (Addition*) &d;
+
+Unrestricted explicit type-casting allows to convert any pointer into any other pointer type, independently of the types they 
+point to. The subsequent call to member result will produce either a run-time error or some other unexpected results.Even though MyClass is declared in your program, it is not declared in main.cpp, and therefore when you compile main.cpp you get that error.
+
+This is where header files come in. Header files allow you to make the interface (in this case, the class MyClass) visible to other .cpp files, while keeping the implementation (in this case, MyClass's member function bodies) in its own .cpp file. That same
+example again, but tweaked slightly:
+Even though MyClass is declared in your program, it is not declared in main.cpp, and therefore when you compile main.cpp you get that error.
+
+This is where header files come in. Header files allow you to make the interface (in this case, the class MyClass) visible to other .cpp 
+files, while keeping the implementation (in this case, MyClass's member function bodies) in its own .cpp file. That same example again, but
+tweaked slightly:
+
