@@ -1,0 +1,91 @@
+Undefined reference means that whilst the compiler understands how the function should work 
+(which means it understands the name of the function, the input types and the return type), the linker cannot 
+find the actual compiled code that actually does the work.
+
+In this case, if you #include <abc.h> in your code, the compiler will then find the function prototype, and from 
+that will know the name and parameters. Good so far. Then, everywhere you use the actual function, the compiler effectively
+leaves a note to the linker, saying "here, you put in the compiled code that actually makes this function call work".
+
+So, then the linker comes along. The compiler has presented it with some compiled code (but NOT the compiled version of abc.cpp,
+because you have not compiled that, or if you have, you have not told the linker where to find it). The linker then goes looking 
+for the compiled function. It does not find it. It comes back and says "undefined reference". You fix this by compiling abc.cpp 
+and making sure the linker can find it.
+
+Under g++, this would be done simply:
+
+g++ main.cpp abc.cpp
+Edit & Run
+ to build.
+ 
+ 
+ 
+整个文件的编写，引入都没有问题，那为什么会报错呢？让我来告诉你，
+
+１．a.h文件写的是函数的声明
+
+２．a.cpp文件写的函数的定义，此处在文件中引入了a.h,#include"XX"的意思就是把文件的内容替换＃ｉｎｃｌｕｄｅ
+
+３．直接在ｍａｉｎ文件中引入了a.h,如果按照 #include只是把文件的内容替换掉的话，好像ｍａｉｎ．ｃｐｐ中只有ｓｈｏｗ函数的声明，
+和ｓｈｏｗ函数的调用．这不就又错了嘛！实则不然，在c++的编译器编译时，压根不管各个文件的相互关系，只在乎当前文件有没有我要的信息，在mian.cpp
+中文件的声明有，则编译可以通过．在Ｃ＋＋编译时，有两个同名文件（后缀不同），a.h与a.cpp，其实名字可以不同，一般建议名字一致．在编译时，编译器
+会自动查找整个工程文件中有没有对头文件中的函数的定义，有则引用，没有就报错，不会在乎文件的位置和名字，前提要在同一工程目录下，且文件的引入路径正确．
+也就是说．在编译时，main函数调用的函数在头文件中声明就行，而文件的定义只要在同一工程下的文件中有定义即可，并且不用引入到调用处．切记：在头文件中写
+函数的定义也可以成功编译，引入定义函数的ｃｐｐ文件后也可以编译，（因为两个文件与.txt文件没有区别）但是不要将ＣＰＰ文件引入，可能会造成函数的多次定义
+而报错，况且头文件也有重复引入的危险（所以用＃ifndef  #define ...#endif取消重复引入）．
+
+４．之后所以报错的原因是没有全部编译，整个项目包含多个头文件和源文件，编译器在编译时是分别编译各个ｃＰＰ文件的，不会编译头文件，因为也没有用．在执行时
+从ｍａｉｎ函数开始．而我报错的原因就是只编译的main.cpp而没有编译所有相关的ｃＰＰ文件，所以报错．（注：文件的编译是分别编译，然后链接，而程序运行是从
+mian 函数开始，所以不要只编译含mian 函数的文件）
+
+５．所以编译整个工文件就可以使文件正常运行
+
+注：模板的声明与实现不能分开写，必须写在同一文件中(但是我在测试时可以分别写，但是不建议)
+class、struct的定义放在头文件原因
+
+头文件中能否#include头文件？                 可以！注意两项事体即可：
+#include真正需要包含的头文件；
+避免多次包含（有时是通过#include间接导致）: 永远记得对头文件用上#ifndef
+如何避免多次定义？  （声明可以多次，定义只能一次）
+如何在头文件中正确的使用#include（#include还是前向声明）？能用前向声明就不#include，弄清楚不完全类型（前向声明）适用场景。
+循环依赖问题：是指两个或多个类相互依赖，这是前向声明的用武之地。不可能同时都是对象为成员变量（至少要有一处为指针或引用，打破循环依赖）
+内联函数理解：their function body（函数定义） needs to exist in every cpp file which calls them。（所以把实现放到头文件或使用inline关键字，都是在告诉编译器，要如此这般处理它）
+
+Each source file is compiled separately from other source files【C++的编译特性对应：每个cpp文件独立】. As a result of this, in terms of compiling, "a.cpp" is clueless as
+ to what's going on inside of "b.cpp"
+ 
+ 头文件的依赖关系(Header File Dependencies)
+        当一个前置声明足够时，不要使用#include。
+
+        当你包含一个头文件时，便引入了头文件依赖关系，每当这个头文件改变时，代码都需要重新编译。而且，如果这些头⽂文件还包含其他头文件，
+        任何改变都将导致包含该头文件的代码重新编译。因此，我们提倡最小化包含，尤其是头文件包含头文件的情形。
+
+        你可以通过使用前置声明来明显地减少自定义头文件包含其他头文件的数量。比如，如果你的头文件使用File类而不需要知道File类的声明，
+        就可以前置声明File类，而不需要使用#include “file/base/file.h”
+
+        如何在不访问其定义的情况下使用类Foo呢？
+
+1. 声明数据成员Foo* 或者Foo&；
+2. 声明以Foo为参数，和/或返回值的函数。（有一个例外：如果参数是Foo或者const Foo&，有一个隐式单参数构造函数，这种情况下我们需要引入完全定义
+来支持自动类型转换）。
+3. 声明静态的Foo数据成员，这是因为静态数据成员在类定义外定义。
+        另⼀方⾯面，如果你的类是Foo的子类或者包括一个Foo类型的数据成员，你必须包含该头⽂文件。
+
+        有时使用指针成员（或使用更好的智能指针）代替对象成员更合理。然而，这会使代码的可读性复杂化并影响性能，所以，当仅以最小化包含文件数为
+        目的时，尽量不要这么做。
+
+        通常，.cc文件需要知道其所用类的具体实现，因此需要包含一些头文件。
+
+        注意：如果你在.cc⽂文件中使用Foo标识符，你应该自己定义Foo，要么通过一个#include命令，要么通过一个前置声明。然而有一个例外：如果在
+        myfile.cc中使用Foo，在myfile.h中#include(或者前置声明)Foo也可以。
+
+ 
+
+内联函数(Inline Functions)
+        当函数很小（比如10⾏行或者更少）时才定义函数为内联。
+
+内联定义：
+
+        通过内联，编译器会在调用处将函数展开为代码，而不通过通常的函数调用机制。
+ ———————————————— 
+版权声明：本文为CSDN博主「arvin_xiaoting」的原创文章，遵循CC 4.0 by-sa版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/xiaoting451292510/article/details/89307033
