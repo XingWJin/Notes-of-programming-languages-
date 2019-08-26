@@ -1,0 +1,36 @@
+Calling a Superclass Virtual Function
+Problem
+You need to invoke a function on a superclass of a particular class, but it is overridden in subclasses, so the usual syntax of p->method() won’t give you the results you are after.
+
+Solution
+Qualify the name of the member function you want to call with the target base class; for example, if you have two classes. 
+
+ Calling a specific version of a virtual function
+
+#include <iostream>
+
+using namespace std;
+
+class Base {
+public:
+   virtual void foo() {cout << "Base::foo()" << endl;}
+};
+
+class Derived : public Base {
+public:
+   virtual void foo() {cout << "Derived::foo()" << endl;}
+};
+
+int main() {
+   Derived* p = new Derived();
+
+   p->foo();       // Calls the derived version
+   p->Base::foo(); // Calls the base version
+}
+Discussion
+Making a regular practice of overriding C++’s polymorphic facilities is not a good idea, but there are times when you have to do it.
+As with so many techniques in C++, it is largely a matter of syntax. When you want to call a specific base class’s version of a virtual
+function, just qualify it with the name of the class you are after, as I did in Example 8-16:
+
+p->Base::foo();
+This will call the version of foo defined for Base, and not the one defined for whatever subclass of Base p points to.
